@@ -13,12 +13,15 @@ jobs:
     - name: Install tools
       run: |
         sudo apt update
-        sudo apt install -y curl unzip
+        sudo apt install -y curl unzip wget
 
     - name: Download magiskboot
       run: |
-        curl -L -o magiskboot https://github.com/topjohnwu/Magisk/releases/latest/download/magiskboot
+        wget https://github.com/topjohnwu/Magisk/releases/latest/download/magiskboot -O magiskboot
         chmod +x magiskboot
+
+    - name: Check file
+      run: ls -l
 
     - name: Unpack
       run: ./magiskboot unpack input/init_boot.img
