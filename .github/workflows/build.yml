@@ -1,0 +1,37 @@
+name: Build KernelSU Next Boot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install tools
+      run: |
+        sudo apt update
+        sudo apt install -y curl unzip
+
+    - name: Download magiskboot
+      run: |
+        curl -L -o magiskboot https://github.com/topjohnwu/Magisk/releases/latest/download/magiskboot
+        chmod +x magiskboot
+
+    - name: Unpack
+      run: ./magiskboot unpack input/init_boot.img
+
+    - name: Patch KernelSU Next
+      run: |
+        curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/main/kernel/setup.sh | bash -
+
+    - name: Repack
+      run: ./magiskboot repack input/init_boot.img
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: patched_boot
+        path: new-boot.img
